@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.example.conquistadores.data.BaseDeDatos
 
 class AltasActivity : AppCompatActivity() {
 

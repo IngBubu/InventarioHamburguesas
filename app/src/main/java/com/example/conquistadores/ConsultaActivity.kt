@@ -1,10 +1,10 @@
 package com.example.conquistadores
 
-import android.content.ContentValues
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.conquistadores.data.BaseDeDatos
 
 class ConsultaActivity : AppCompatActivity() {
 

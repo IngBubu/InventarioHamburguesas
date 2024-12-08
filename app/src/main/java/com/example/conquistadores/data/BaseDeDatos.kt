@@ -1,4 +1,4 @@
-package com.example.conquistadores
+package com.example.conquistadores.data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

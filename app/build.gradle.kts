@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.sqlite:sqlite:2.3.1")
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
