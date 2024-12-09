@@ -19,5 +19,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnConsulta).setOnClickListener {
             startActivity(Intent(this, ConsultaActivity::class.java))
         }
+        findViewById<Button>(R.id.btnVentas).setOnClickListener{
+            startActivity(Intent(this, VentasActivity::class.java))
+        }
     }
 }

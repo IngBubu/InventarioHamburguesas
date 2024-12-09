@@ -2,146 +2,105 @@ package com.example.conquistadores
 
 import android.content.ContentValues
 import android.os.Bundle
-import android.widget.*
+import android.util.Log
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.conquistadores.adapter.ProductoAdapter
 import com.example.conquistadores.data.BaseDeDatos
+import com.example.conquistadores.data.Producto
 
 class ModificacionActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: BaseDeDatos
-    private lateinit var spTablas: Spinner
-    private lateinit var etId: EditText
-    private lateinit var etCampo1: EditText
-    private lateinit var etCampo2: EditText
-    private lateinit var etCampo3: EditText
-    private lateinit var etCampo4: EditText
-    private lateinit var btnBuscar: Button
-    private lateinit var btnGuardar: Button
-    private lateinit var layoutCampos: CardView
+    private lateinit var rvProductos: RecyclerView
+    private lateinit var btnInventariar: Button
+    private lateinit var adaptador: ProductoAdapter
+    private var listaProductos = mutableListOf<Producto>()
 
-    private var tablaSeleccionada: String = ""
-
+    companion object {
+        private const val TAG = "ModificacionActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modificacion)
 
         dbHelper = BaseDeDatos(this)
+        rvProductos = findViewById(R.id.rvProductos)
+        btnInventariar = findViewById(R.id.btnInventariar)
 
-        spTablas = findViewById(R.id.spTablas)
-        etId = findViewById(R.id.etId)
-        etCampo1 = findViewById(R.id.etCampo1)
-        etCampo2 = findViewById(R.id.etCampo2)
-        etCampo3 = findViewById(R.id.etCampo3)
-        etCampo4 = findViewById(R.id.etCampo4)
-        btnBuscar = findViewById(R.id.btnBuscar)
-        btnGuardar = findViewById(R.id.btnGuardar)
-        layoutCampos = findViewById(R.id.layoutCampos)
+        cargarProductos()
 
-        // Configuración del Spinner
-        val tablas = arrayOf("Selecciona una tabla", "Productos", "Ventas" )
-        spTablas.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, tablas)
+        adaptador = ProductoAdapter(listaProductos)
+        rvProductos.layoutManager = LinearLayoutManager(this)
+        rvProductos.adapter = adaptador
 
-        spTablas.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                tablaSeleccionada = tablas[position]
-                configurarCampos(tablaSeleccionada)
-
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        btnBuscar.setOnClickListener {
-            if (etId.text.isNotEmpty()) {
-                cargarDatos(tablaSeleccionada, etId.text.toString().toInt())
-            } else {
-                Toast.makeText(this, "Por favor ingresa un ID válido", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        btnGuardar.setOnClickListener {
-            if (etId.text.isNotEmpty()) {
-                guardarCambios(tablaSeleccionada, etId.text.toString().toInt())
-            } else {
-                Toast.makeText(this, "Por favor ingresa un ID válido", Toast.LENGTH_SHORT).show()
-            }
+        btnInventariar.setOnClickListener {
+            guardarInventario()
+            limpiarCantidades() // Limpia las cantidades ingresadas después de guardar
         }
     }
 
-
-    private fun configurarCampos(tabla: String) {
-        layoutCampos.visibility = if (tabla != "Selecciona una tabla") LinearLayout.VISIBLE else LinearLayout.GONE
-        etCampo1.visibility = EditText.VISIBLE
-        etCampo2.visibility = EditText.VISIBLE
-        etCampo3.visibility = EditText.VISIBLE
-        etCampo4.visibility = EditText.VISIBLE
-
-        when (tabla) {
-            "Productos" -> {
-                etCampo1.hint = "Nombre"
-                etCampo2.hint = "Cantidad"
-                etCampo3.hint = "Precio"
-                etCampo4.visibility = EditText.GONE
-            }
-            "Ventas" -> {
-                etCampo1.hint = "Fecha (YYYY-MM-DD)"
-                etCampo2.hint = "Total"
-                etCampo3.visibility = EditText.GONE
-                etCampo4.visibility = EditText.GONE
-            }
-        }
-    }
-
-    private fun cargarDatos(tabla: String, id: Int) {
+    private fun cargarProductos() {
+        Log.d(TAG, "Cargando productos desde la base de datos...")
         val db = dbHelper.readableDatabase
-        val query = when (tabla) {
-            "Productos" -> "SELECT * FROM Productos WHERE id_producto = ?"
-            "Ventas" -> "SELECT * FROM Ventas WHERE id_venta = ?"
-            else -> ""
-        }
+        val cursor = db.rawQuery("SELECT * FROM Productos", null)
 
-        val cursor = db.rawQuery(query, arrayOf(id.toString()))
+        listaProductos.clear()
         if (cursor.moveToFirst()) {
-            when (tabla) {
-                "Productos" -> {
-                    etCampo1.setText(cursor.getString(cursor.getColumnIndexOrThrow("nombre")))
-                    etCampo2.setText(cursor.getInt(cursor.getColumnIndexOrThrow("cantidad")).toString())
-                    etCampo3.setText(cursor.getDouble(cursor.getColumnIndexOrThrow("precio")).toString())
-                }
-                "Ventas" -> {
-                    etCampo1.setText(cursor.getString(cursor.getColumnIndexOrThrow("fecha")))
-                    etCampo2.setText(cursor.getDouble(cursor.getColumnIndexOrThrow("total")).toString())
-                }
-            }
+            do {
+                val producto = Producto(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto")),
+                    nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre")),
+                    cantidad = cursor.getInt(cursor.getColumnIndexOrThrow("cantidad")),
+                    precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"))
+                )
+                listaProductos.add(producto)
+                Log.d(TAG, "Producto cargado: ID=${producto.id}, Nombre=${producto.nombre}, Cantidad=${producto.cantidad}, Precio=${producto.precio}")
+            } while (cursor.moveToNext())
         } else {
-            Toast.makeText(this, "El ID $id no existe en la tabla $tabla", Toast.LENGTH_SHORT).show()
-
+            Log.d(TAG, "No se encontraron productos en la base de datos.")
         }
+
         cursor.close()
         db.close()
+        Log.d(TAG, "Productos cargados: ${listaProductos.size}")
     }
 
-    private fun guardarCambios(tabla: String, id: Int) {
+    private fun guardarInventario() {
+        Log.d(TAG, "Guardando inventario...")
         val db = dbHelper.writableDatabase
-        val values = ContentValues()
+        var productosActualizados = 0
 
-        when (tabla) {
-            "Productos" -> {
-                values.put("nombre", etCampo1.text.toString())
-                values.put("cantidad", etCampo2.text.toString().toIntOrNull())
-                values.put("precio", etCampo3.text.toString().toDoubleOrNull())
-                db.update("Productos", values, "id_producto = ?", arrayOf(id.toString()))
-            }
-            "Ventas" -> {
-                values.put("fecha", etCampo1.text.toString())
-                values.put("total", etCampo2.text.toString().toDoubleOrNull())
-                db.update("Ventas", values, "id_venta = ?", arrayOf(id.toString()))
+        for (producto in listaProductos) {
+            if (producto.cantidadNueva > 0) { // Solo actualiza si se ingresó una cantidad nueva
+                val nuevaCantidad = producto.cantidad + producto.cantidadNueva
+
+                val values = ContentValues()
+                values.put("cantidad", nuevaCantidad)
+
+                val rowsAffected = db.update("Productos", values, "id_producto = ?", arrayOf(producto.id.toString()))
+                if (rowsAffected > 0) {
+                    Log.d(TAG, "Producto actualizado correctamente: ID=${producto.id}, Cantidad anterior=${producto.cantidad}, Nueva cantidad=$nuevaCantidad")
+                    producto.cantidad = nuevaCantidad // Actualiza la cantidad en memoria
+                    productosActualizados++
+                } else {
+                    Log.e(TAG, "Error al actualizar el producto: ID=${producto.id}")
+                }
             }
         }
 
-        Toast.makeText(this, "Registro actualizado correctamente", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Inventario actualizado correctamente. Productos actualizados: $productosActualizados", Toast.LENGTH_SHORT).show()
         db.close()
+        Log.d(TAG, "Inventario guardado. Total productos actualizados: $productosActualizados")
+    }
+
+    private fun limpiarCantidades() {
+        Log.d(TAG, "Limpiando cantidades ingresadas...")
+        listaProductos.forEach { it.cantidadNueva = 0 } // Reinicia la cantidad ingresada
+        adaptador.notifyDataSetChanged() // Actualiza la vista
     }
 }

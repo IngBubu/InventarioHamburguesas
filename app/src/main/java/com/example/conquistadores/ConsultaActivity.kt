@@ -1,6 +1,7 @@
 package com.example.conquistadores
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -10,8 +11,11 @@ class ConsultaActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: BaseDeDatos
     private lateinit var lvResultados: ListView
-    private lateinit var adapter: ArrayAdapter<String>
     private val resultados = ArrayList<Pair<String, Int>>() // Lista para guardar registros y sus IDs
+
+    companion object {
+        private const val TAG = "ConsultaActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,50 +27,97 @@ class ConsultaActivity : AppCompatActivity() {
         val btnProductos = findViewById<Button>(R.id.btnProductos)
         val btnVentas = findViewById<Button>(R.id.btnVentas)
 
-        btnProductos.setOnClickListener { consultarTabla("Productos") }
-        btnVentas.setOnClickListener { consultarTabla("Ventas") }
+        // Botón para consultar la tabla Productos
+        btnProductos.setOnClickListener { consultarProductos() }
 
+        // Botón para consultar la tabla Ventas
+        btnVentas.setOnClickListener { consultarVentas() }
     }
 
-    private fun consultarTabla(tabla: String) {
+    private fun consultarProductos() {
+        Log.d(TAG, "Iniciando consulta de la tabla Productos...")
         val db = dbHelper.readableDatabase
         resultados.clear()
 
-        val query = when (tabla) {
-            "Productos" -> "SELECT * FROM Productos"
-            "Ventas" -> "SELECT * FROM Ventas"
-            else -> ""
-        }
+        // Consulta para obtener todos los productos
+        val query = """
+            SELECT id_producto, nombre, cantidad, precio
+            FROM Productos
+        """.trimIndent()
 
+        Log.d(TAG, "Ejecutando consulta: $query")
         val cursor = db.rawQuery(query, null)
-        if (cursor.moveToFirst()) {
-            do {
-                val registro = when (tabla) {
-                    "Productos" -> {
-                        val id = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto"))
-                        val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
-                        val cantidad = cursor.getInt(cursor.getColumnIndexOrThrow("cantidad"))
-                        val precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"))
-                        resultados.add(Pair("ID: $id\nNombre: $nombre\nCantidad: $cantidad\nPrecio: $precio", id))
-                    }
-                    "Ventas" -> {
-                        val id = cursor.getInt(cursor.getColumnIndexOrThrow("id_venta"))
-                        val fecha = cursor.getString(cursor.getColumnIndexOrThrow("fecha"))
-                        val total = cursor.getDouble(cursor.getColumnIndexOrThrow("total"))
-                        resultados.add(Pair("ID: $id\nFecha: $fecha\nTotal: $total", id))
-                    }
 
-                    else -> ""
-                }
+        if (cursor.moveToFirst()) {
+            Log.d(TAG, "Registros encontrados en la tabla Productos.")
+            do {
+                val idProducto = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto"))
+                val nombreProducto = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
+                val cantidadProducto = cursor.getInt(cursor.getColumnIndexOrThrow("cantidad"))
+                val precioProducto = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"))
+
+                Log.d(TAG, "Registro: ID Producto: $idProducto, Nombre: $nombreProducto, Cantidad: $cantidadProducto, Precio: $precioProducto")
+
+                resultados.add(
+                    Pair(
+                        "ID Producto: $idProducto\nNombre: $nombreProducto\nCantidad: $cantidadProducto\nPrecio: $precioProducto",
+                        idProducto
+                    )
+                )
             } while (cursor.moveToNext())
         } else {
-            resultados.add(Pair("No hay registros en la tabla $tabla.", -1))
+            Log.d(TAG, "No se encontraron registros en la tabla Productos.")
+            resultados.add(Pair("No hay productos registrados en la tabla Productos.", -1))
         }
+
         cursor.close()
         db.close()
 
-        actualizarListView(tabla)
-        Toast.makeText(this, "Consulta de $tabla realizada", Toast.LENGTH_SHORT).show()
+        actualizarListView("Productos")
+        Toast.makeText(this, "Consulta de Productos realizada", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun consultarVentas() {
+        Log.d(TAG, "Iniciando consulta de la tabla Ventas...")
+        val db = dbHelper.readableDatabase
+        resultados.clear()
+
+        // Consulta para obtener todas las ventas con forma de pago
+        val query = """
+            SELECT id_venta, fecha, total, forma_pago
+            FROM Ventas
+        """.trimIndent()
+
+        Log.d(TAG, "Ejecutando consulta: $query")
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            Log.d(TAG, "Registros encontrados en la tabla Ventas.")
+            do {
+                val idVenta = cursor.getInt(cursor.getColumnIndexOrThrow("id_venta"))
+                val fecha = cursor.getString(cursor.getColumnIndexOrThrow("fecha"))
+                val total = cursor.getDouble(cursor.getColumnIndexOrThrow("total"))
+                val formaPago = cursor.getString(cursor.getColumnIndexOrThrow("forma_pago"))
+
+                Log.d(TAG, "Registro: ID Venta: $idVenta, Fecha: $fecha, Total: $total, Forma de Pago: $formaPago")
+
+                resultados.add(
+                    Pair(
+                        "ID Venta: $idVenta\nFecha: $fecha\nTotal: $total\nForma de Pago: $formaPago",
+                        idVenta
+                    )
+                )
+            } while (cursor.moveToNext())
+        } else {
+            Log.d(TAG, "No se encontraron registros en la tabla Ventas.")
+            resultados.add(Pair("No hay ventas registradas en la tabla Ventas.", -1))
+        }
+
+        cursor.close()
+        db.close()
+
+        actualizarListView("Ventas")
+        Toast.makeText(this, "Consulta de Ventas realizada", Toast.LENGTH_SHORT).show()
     }
 
     private fun actualizarListView(tabla: String) {
@@ -96,8 +147,8 @@ class ConsultaActivity : AppCompatActivity() {
     private fun eliminarRegistro(tabla: String, id: Int) {
         val db = dbHelper.writableDatabase
         val whereClause = when (tabla) {
-            "Productos" -> "id_producto=?"
             "Ventas" -> "id_venta=?"
+            "Productos" -> "id_producto=?" // Eliminar de la tabla Productos
             else -> ""
         }
         db.delete(tabla, whereClause, arrayOf(id.toString()))

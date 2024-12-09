@@ -19,10 +19,44 @@
         app:layout_constraintWidth_percent="0.5"
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btnAltas"
+        app:layout_constraintBottom_toTopOf="@+id/btnModificacion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/logo" />
+
+    <!-- Botón Inventario -->
+    <Button
+        android:id="@+id/btnModificacion"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Inventario"
+        android:backgroundTint="@android:color/holo_orange_light"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnVentas"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Botón Ventas -->
+    <Button
+        android:id="@+id/btnVentas"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Ventas"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintTop_toBottomOf="@id/btnModificacion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnAltas"
+        android:layout_marginBottom="12dp" />
 
     <!-- Botón Altas -->
     <Button
@@ -35,25 +69,7 @@
         android:padding="12dp"
         app:layout_constraintWidth_percent="0.8"
         app:layout_constraintHeight_default="wrap"
-        app:layout_constraintTop_toBottomOf="@id/logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnModificacion"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:layout_marginBottom="12dp" />
-
-    <!-- Botón Modificación -->
-    <Button
-        android:id="@+id/btnModificacion"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Modificación"
-        android:backgroundTint="@android:color/holo_orange_light"
-        android:textColor="@android:color/white"
-        android:padding="12dp"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHeight_default="wrap"
-        app:layout_constraintTop_toBottomOf="@id/btnAltas"
+        app:layout_constraintTop_toBottomOf="@id/btnVentas"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btnConsulta"
@@ -70,7 +86,7 @@
         android:padding="12dp"
         app:layout_constraintWidth_percent="0.8"
         app:layout_constraintHeight_default="wrap"
-        app:layout_constraintTop_toBottomOf="@id/btnModificacion"
+        app:layout_constraintTop_toBottomOf="@id/btnAltas"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

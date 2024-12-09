@@ -14,7 +14,7 @@
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selecciona una Categoria"
+        android:text="Alta De Producots"
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#37474F"
@@ -23,40 +23,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="24dp" />
 
-    <!-- Botones para seleccionar tablas -->
-    <LinearLayout
-        android:id="@+id/llBotones"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitulo">
-
-        <Button
-            android:id="@+id/btnProductos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:backgroundTint="#64B5F6"
-            android:padding="12dp"
-            android:text="Productos"
-            android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/btnVentas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:backgroundTint="#81C784"
-            android:padding="12dp"
-            android:text="Ventas"
-            android:textColor="@android:color/white" />
-    </LinearLayout>
 
     <!-- CardView para campos de entrada -->
     <androidx.cardview.widget.CardView
@@ -64,15 +30,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="130dp"
         android:layout_marginEnd="10dp"
+        android:background="@color/transparente"
         android:padding="16dp"
-        android:visibility="gone"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llBotones">
+        app:layout_constraintTop_toBottomOf="@+id/tvTitulo">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,44 +46,27 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/etCampo1"
+                android:id="@+id/etNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:background="@drawable/editbox_background"
-                android:hint="Campo 1"
+                android:hint="Nombre del producto"
                 android:padding="12dp"
                 android:textSize="16sp" />
 
+
             <EditText
-                android:id="@+id/etCampo2"
+                android:id="@+id/etPrecio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:background="@drawable/editbox_background"
-                android:hint="Campo 2"
+                android:hint="Precio del producto"
                 android:padding="12dp"
                 android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/etCampo3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/editbox_background"
-                android:hint="Campo 3"
-                android:padding="12dp"
-                android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/etCampo4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/editbox_background"
-                android:hint="Campo 4"
-                android:padding="12dp"
-                android:textSize="16sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -127,8 +76,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
+        android:layout_marginBottom="252dp"
         android:backgroundTint="#4CAF50"
         android:elevation="4dp"
         android:padding="16dp"
@@ -137,6 +86,8 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutCampos" />
+        app:layout_constraintTop_toBottomOf="@+id/layoutCampos"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
