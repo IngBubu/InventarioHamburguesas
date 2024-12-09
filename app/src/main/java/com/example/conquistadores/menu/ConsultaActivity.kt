@@ -1,10 +1,11 @@
-package com.example.conquistadores
+package com.example.conquistadores.menu
 
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.conquistadores.R
 import com.example.conquistadores.data.BaseDeDatos
 
 class ConsultaActivity : AppCompatActivity() {
@@ -45,18 +46,14 @@ class ConsultaActivity : AppCompatActivity() {
             FROM Productos
         """.trimIndent()
 
-        Log.d(TAG, "Ejecutando consulta: $query")
         val cursor = db.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
-            Log.d(TAG, "Registros encontrados en la tabla Productos.")
             do {
                 val idProducto = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto"))
                 val nombreProducto = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
                 val cantidadProducto = cursor.getInt(cursor.getColumnIndexOrThrow("cantidad"))
                 val precioProducto = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"))
-
-                Log.d(TAG, "Registro: ID Producto: $idProducto, Nombre: $nombreProducto, Cantidad: $cantidadProducto, Precio: $precioProducto")
 
                 resultados.add(
                     Pair(
@@ -66,7 +63,6 @@ class ConsultaActivity : AppCompatActivity() {
                 )
             } while (cursor.moveToNext())
         } else {
-            Log.d(TAG, "No se encontraron registros en la tabla Productos.")
             resultados.add(Pair("No hay productos registrados en la tabla Productos.", -1))
         }
 
@@ -78,7 +74,6 @@ class ConsultaActivity : AppCompatActivity() {
     }
 
     private fun consultarVentas() {
-        Log.d(TAG, "Iniciando consulta de la tabla Ventas...")
         val db = dbHelper.readableDatabase
         resultados.clear()
 
@@ -88,18 +83,15 @@ class ConsultaActivity : AppCompatActivity() {
             FROM Ventas
         """.trimIndent()
 
-        Log.d(TAG, "Ejecutando consulta: $query")
         val cursor = db.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
-            Log.d(TAG, "Registros encontrados en la tabla Ventas.")
             do {
                 val idVenta = cursor.getInt(cursor.getColumnIndexOrThrow("id_venta"))
                 val fecha = cursor.getString(cursor.getColumnIndexOrThrow("fecha"))
                 val total = cursor.getDouble(cursor.getColumnIndexOrThrow("total"))
                 val formaPago = cursor.getString(cursor.getColumnIndexOrThrow("forma_pago"))
 
-                Log.d(TAG, "Registro: ID Venta: $idVenta, Fecha: $fecha, Total: $total, Forma de Pago: $formaPago")
 
                 resultados.add(
                     Pair(
@@ -109,7 +101,6 @@ class ConsultaActivity : AppCompatActivity() {
                 )
             } while (cursor.moveToNext())
         } else {
-            Log.d(TAG, "No se encontraron registros en la tabla Ventas.")
             resultados.add(Pair("No hay ventas registradas en la tabla Ventas.", -1))
         }
 
@@ -121,7 +112,8 @@ class ConsultaActivity : AppCompatActivity() {
     }
 
     private fun actualizarListView(tabla: String) {
-        val adapter = object : ArrayAdapter<Pair<String, Int>>(this, R.layout.list_item_consulta, resultados) {
+        val adapter = object : ArrayAdapter<Pair<String, Int>>(this,
+            R.layout.list_item_consulta, resultados) {
             override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
                 val view = layoutInflater.inflate(R.layout.list_item_consulta, parent, false)
                 val tvRegistro = view.findViewById<TextView>(R.id.tvRegistro)

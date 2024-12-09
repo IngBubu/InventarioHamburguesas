@@ -13,16 +13,16 @@
         android:theme="@style/Theme.Conquistadores"
         tools:targetApi="31">
         <activity
-            android:name=".VentasActivity"
+            android:name=".menu.VentasActivity"
             android:exported="false" />
         <activity
-            android:name=".ConsultaActivity"
+            android:name=".menu.ConsultaActivity"
             android:exported="false" />
         <activity
-            android:name=".ModificacionActivity"
+            android:name=".menu.ModificacionActivity"
             android:exported="false" />
         <activity
-            android:name=".AltasActivity"
+            android:name=".menu.AltasActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

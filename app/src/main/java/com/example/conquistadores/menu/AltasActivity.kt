@@ -1,9 +1,10 @@
-package com.example.conquistadores
+package com.example.conquistadores.menu
 
 import android.content.ContentValues
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.conquistadores.R
 import com.example.conquistadores.data.BaseDeDatos
 
 class AltasActivity : AppCompatActivity() {

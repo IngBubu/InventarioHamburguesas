@@ -1,4 +1,4 @@
-package com.example.conquistadores
+package com.example.conquistadores.menu
 
 import android.content.ContentValues
 import android.os.Bundle
@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.conquistadores.R
 import com.example.conquistadores.data.BaseDeDatos
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,9 +21,7 @@ class VentasActivity : AppCompatActivity() {
     private lateinit var radioGroupFormaPago: RadioGroup
     private lateinit var btnGuardarVenta: Button
 
-    companion object {
-        private const val TAG = "VentasActivity"
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,11 +88,9 @@ class VentasActivity : AppCompatActivity() {
         // Insertar nueva venta
         val newRowId = db.insert("Ventas", null, values)
         if (newRowId != -1L) {
-            Log.d(TAG, "Venta registrada correctamente: ID=$newRowId")
             Toast.makeText(this, "Venta registrada correctamente.", Toast.LENGTH_SHORT).show()
             limpiarCampos()
         } else {
-            Log.e(TAG, "Error al registrar la venta.")
             Toast.makeText(this, "Error al registrar la venta.", Toast.LENGTH_SHORT).show()
         }
 

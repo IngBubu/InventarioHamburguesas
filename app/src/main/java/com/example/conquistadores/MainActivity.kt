@@ -4,6 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.conquistadores.menu.AltasActivity
+import com.example.conquistadores.menu.ConsultaActivity
+import com.example.conquistadores.menu.ModificacionActivity
+import com.example.conquistadores.menu.VentasActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
