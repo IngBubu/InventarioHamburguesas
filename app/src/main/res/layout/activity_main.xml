@@ -58,18 +58,35 @@
         app:layout_constraintBottom_toTopOf="@id/btnAltas"
         android:layout_marginBottom="12dp" />
 
-    <!-- Botón Altas -->
+    <!-- Botón Alta de Productos -->
     <Button
         android:id="@+id/btnAltas"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Altas"
+        android:text="Alta Productos"
         android:backgroundTint="@android:color/holo_green_light"
         android:textColor="@android:color/white"
         android:padding="12dp"
         app:layout_constraintWidth_percent="0.8"
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintTop_toBottomOf="@id/btnVentas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnMenu"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Botón Alta Menú -->
+    <Button
+        android:id="@+id/btnMenu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Alta Menú"
+        android:backgroundTint="@android:color/holo_purple"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintTop_toBottomOf="@id/btnAltas"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btnConsulta"
@@ -86,7 +103,7 @@
         android:padding="12dp"
         app:layout_constraintWidth_percent="0.8"
         app:layout_constraintHeight_default="wrap"
-        app:layout_constraintTop_toBottomOf="@id/btnAltas"
+        app:layout_constraintTop_toBottomOf="@id/btnMenu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

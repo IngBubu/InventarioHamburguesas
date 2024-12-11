@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.conquistadores.menu.AltaMenuActivity
 import com.example.conquistadores.menu.AltasActivity
 import com.example.conquistadores.menu.ConsultaActivity
 import com.example.conquistadores.menu.ModificacionActivity
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnVentas).setOnClickListener{
             startActivity(Intent(this, VentasActivity::class.java))
+        }
+        findViewById<Button>(R.id.btnMenu).setOnClickListener{
+            startActivity(Intent(this, AltaMenuActivity::class.java))
         }
     }
 }
