@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -17,7 +18,7 @@
         android:text="Registrar Nueva Venta"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -27,53 +28,29 @@
         android:id="@+id/etFecha"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="20dp"
         android:hint="Fecha (YYYY-MM-DD)"
         android:inputType="date"
         android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloVentas"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTituloVentas" />
-
-    <!-- Campo de Total -->
-    <EditText
-        android:id="@+id/etTotal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="20dp"
-        android:hint="Total de la Venta"
-        android:inputType="numberDecimal"
-        android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etFecha" />
+        android:layout_marginBottom="16dp" />
 
     <!-- Selector de Forma de Pago -->
     <RadioGroup
         android:id="@+id/radioGroupFormaPago"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="20dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/etFecha"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTotal">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <RadioButton
             android:id="@+id/rbEfectivo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:text="Efectivo" />
 
         <RadioButton
@@ -83,23 +60,68 @@
             android:text="Tarjeta" />
     </RadioGroup>
 
+    <!-- Texto del Total -->
+    <TextView
+        android:id="@+id/tvTotalVenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total: $0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/radioGroupFormaPago"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Botones para Menú y Productos -->
+    <LinearLayout
+        android:id="@+id/linearLayoutBotones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tvTotalVenta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FF3333"
+            android:text="Menú" />
+
+        <Button
+            android:id="@+id/btnProductos"
+            android:layout_width="0dp"
+            android:backgroundTint="#00B2FF"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Productos" />
+    </LinearLayout>
+
+    <!-- RecyclerView para Selección -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSeleccion"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutBotones"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnGuardarVenta" />
+
     <!-- Botón Guardar -->
     <Button
         android:id="@+id/btnGuardarVenta"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="168dp"
-        android:backgroundTint="#4CAF50"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:text="Guardar Venta"
+        android:backgroundTint="#4CAF50"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="wrap"
-        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroupFormaPago"
-        app:layout_constraintVertical_bias="0.826"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

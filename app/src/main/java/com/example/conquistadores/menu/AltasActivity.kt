@@ -11,7 +11,8 @@ class AltasActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: BaseDeDatos
     private lateinit var etNombre: EditText
-    private lateinit var etPrecio: EditText
+    private lateinit var etPrecioCosto: EditText
+    private lateinit var etPrecioPublico: EditText
     private lateinit var btnGuardar: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +24,8 @@ class AltasActivity : AppCompatActivity() {
 
         // Encuentra las vistas
         etNombre = findViewById(R.id.etNombre)
-        etPrecio = findViewById(R.id.etPrecio)
+        etPrecioCosto = findViewById(R.id.etPrecio)
+        etPrecioPublico = findViewById(R.id.etPrecioPublico)
         btnGuardar = findViewById(R.id.btnGuardar)
 
         // Configura el botón Guardar
@@ -38,12 +40,14 @@ class AltasActivity : AppCompatActivity() {
 
         // Obtiene los valores de los campos
         val nombre = etNombre.text.toString()
-        val precio = etPrecio.text.toString().toDoubleOrNull()
+        val precioCosto = etPrecioCosto.text.toString().toDoubleOrNull()
+        val precioPublico = etPrecioPublico.text.toString().toDoubleOrNull()
 
         // Valida los datos
-        if (nombre.isNotEmpty() && precio != null) {
+        if (nombre.isNotEmpty() && precioCosto != null && precioPublico != null) {
             values.put("nombre", nombre)
-            values.put("precio", precio)
+            values.put("precio", precioCosto)
+            values.put("precio_publico", precioPublico)
 
             // Inserta el producto con cantidad inicial en 0 (configurado por defecto en la base de datos)
             val resultado = db.insert("Productos", null, values)
@@ -69,6 +73,7 @@ class AltasActivity : AppCompatActivity() {
 
         // Limpia los campos después de guardar
         etNombre.text.clear()
-        etPrecio.text.clear()
+        etPrecioCosto.text.clear()
+        etPrecioPublico.text.clear()
     }
 }
