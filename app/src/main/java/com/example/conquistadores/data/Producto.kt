@@ -5,5 +5,7 @@ data class Producto(
     val nombre: String,
     var cantidad: Int,
     val precio: Double,
-    var cantidadNueva: Int = 0
+    var cantidadNueva: Int = 0,
+    val cantidadUsada: Int = 1,
+    val isMenu: Boolean = false
 )

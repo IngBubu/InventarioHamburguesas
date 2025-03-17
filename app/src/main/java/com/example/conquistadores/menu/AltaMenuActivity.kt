@@ -2,6 +2,7 @@ package com.example.conquistadores.menu
 
 import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -33,11 +34,12 @@ class AltaMenuActivity : AppCompatActivity() {
         btnGuardarMenu = findViewById(R.id.btnGuardarMenu)
         rvIngredientes = findViewById(R.id.rvIngredientes)
 
-        cargarProductos()
-
+        // Inicializar el adapter antes de cargar los productos
         adapter = IngredienteAdapter(listaProductos)
         rvIngredientes.layoutManager = LinearLayoutManager(this)
         rvIngredientes.adapter = adapter
+
+        cargarProductos()
 
         btnGuardarMenu.setOnClickListener {
             guardarMenu()
@@ -62,6 +64,7 @@ class AltaMenuActivity : AppCompatActivity() {
         }
         cursor.close()
         db.close()
+        adapter.notifyDataSetChanged()
     }
 
     private fun guardarMenu() {
@@ -74,31 +77,47 @@ class AltaMenuActivity : AppCompatActivity() {
         }
 
         val db = dbHelper.writableDatabase
+        db.beginTransaction() // Inicia una transacción para garantizar la atomicidad de la operación
 
-        // Insertar el plato en la tabla Menus
-        val menuValues = ContentValues().apply {
-            put("nombre", nombrePlato)
-            put("precio", precioPlato)
-        }
-        val menuId = db.insert("Menus", null, menuValues)
-
-        if (menuId != -1L) {
-            // Insertar los ingredientes en la tabla IngredientesMenus
-            listaProductos.filter { it.cantidad > 0 }.forEach { ingrediente ->
-                val ingredienteValues = ContentValues().apply {
-                    put("id_menu", menuId)
-                    put("id_producto", ingrediente.id)
-                    put("cantidad_usada", ingrediente.cantidad)
-                }
-                db.insert("IngredientesMenus", null, ingredienteValues)
+        try {
+            // Insertar el plato en la tabla Menus
+            val menuValues = ContentValues().apply {
+                put("nombre", nombrePlato)
+                put("precio", precioPlato)
             }
-            Toast.makeText(this, "Menú guardado correctamente.", Toast.LENGTH_SHORT).show()
-            limpiarCampos()
-        } else {
-            Toast.makeText(this, "Error al guardar el menú.", Toast.LENGTH_SHORT).show()
-        }
+            val menuId = db.insert("Menus", null, menuValues)
 
-        db.close()
+            if (menuId != -1L) {
+                // Insertar los ingredientes en la tabla IngredientesMenus
+                val ingredientes = listaProductos.filter { it.cantidad > 0 }
+                ingredientes.forEach { ingrediente ->
+                    val ingredienteValues = ContentValues().apply {
+                        put("id_menu", menuId)
+                        put("id_producto", ingrediente.id)
+                        put("cantidad_usada", ingrediente.cantidad)
+                    }
+                    db.insert("IngredientesMenus", null, ingredienteValues)
+                }
+
+                // Log del nombre del platillo y los ingredientes
+                Log.d("AltaMenuActivity", "Platillo agregado: $nombrePlato")
+                ingredientes.forEach { ingrediente ->
+                    Log.d("AltaMenuActivity", "Ingrediente: ${ingrediente.nombre}, Cantidad: ${ingrediente.cantidad}")
+                }
+
+                db.setTransactionSuccessful() // Marca la transacción como exitosa
+                Toast.makeText(this, "Menú guardado correctamente.", Toast.LENGTH_SHORT).show()
+                limpiarCampos()
+            } else {
+                Toast.makeText(this, "Error al guardar el menú.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e("AltaMenuActivity", "Error al guardar el menú: ${e.message}")
+            Toast.makeText(this, "Error al guardar el menú.", Toast.LENGTH_SHORT).show()
+        } finally {
+            db.endTransaction() // Finaliza la transacción
+            db.close()
+        }
     }
 
     private fun limpiarCampos() {

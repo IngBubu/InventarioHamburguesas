@@ -4,10 +4,10 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class BaseDeDatos(context: Context) : SQLiteOpenHelper(context, "ConquistadoresDB", null, 1) {
+class BaseDeDatos(context: Context) : SQLiteOpenHelper(context, "ConquistadoresDB", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Crea todas las tablas necesarias
+        // Crear todas las tablas necesarias
         db.execSQL(
             """
             CREATE TABLE Productos (
@@ -84,6 +84,27 @@ class BaseDeDatos(context: Context) : SQLiteOpenHelper(context, "ConquistadoresD
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // No se necesita migración, ya que estamos usando la versión inicial
+        if (oldVersion < 2) {
+            // Verificar si la tabla IngredientesMenus ya existe antes de crearla
+            val cursor = db.rawQuery(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='IngredientesMenus'",
+                null
+            )
+            if (cursor.count == 0) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IngredientesMenus (
+                        id_ingrediente INTEGER PRIMARY KEY AUTOINCREMENT,
+                        id_menu INTEGER NOT NULL,
+                        id_producto INTEGER NOT NULL,
+                        cantidad_usada INTEGER NOT NULL,
+                        FOREIGN KEY (id_menu) REFERENCES Menus (id_menu),
+                        FOREIGN KEY (id_producto) REFERENCES Productos (id_producto)
+                    )
+                    """.trimIndent()
+                )
+            }
+            cursor.close()
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.example.conquistadores.menu
 
 import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -84,15 +86,17 @@ class VentasActivity : AppCompatActivity() {
     private fun cargarMenu() {
         listaProductos.clear()
         val db = dbHelper.readableDatabase
-        val query = "SELECT id_menu AS id_producto, nombre, precio FROM Menus"
+        val query = """
+        SELECT id_menu, nombre, precio FROM Menus
+    """
         val cursor = db.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
             do {
-                val idProducto = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto"))
-                val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
-                val precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"))
-                listaProductos.add(Producto(idProducto, nombre, 0, precio))
+                val idMenu = cursor.getInt(cursor.getColumnIndexOrThrow("id_menu"))
+                val nombreMenu = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
+                val precioMenu = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"))
+                listaProductos.add(Producto(idMenu, nombreMenu, 0, precioMenu, isMenu = true))
             } while (cursor.moveToNext())
         }
 
@@ -128,7 +132,6 @@ class VentasActivity : AppCompatActivity() {
         tvTotalVenta.text = "Total: $$totalVenta"
     }
 
-
     private fun guardarVenta() {
         val fecha = etFecha.text.toString().trim()
         if (fecha.isEmpty() || totalVenta <= 0) {
@@ -156,10 +159,14 @@ class VentasActivity : AppCompatActivity() {
 
         val ventaId = db.insert("Ventas", null, values)
         if (ventaId != -1L) {
-            // Actualizar inventario según los productos vendidos
+            // Actualizar inventario y registrar detalles de venta
             listaProductos.forEach { producto ->
                 if (producto.cantidad > 0) {
-                    descontarProducto(producto.id, producto.cantidad)
+                    if (producto.isMenu) {
+                        registrarDetalleVentaMenu(db, ventaId, producto)
+                    } else {
+                        registrarDetalleVentaProducto(db, ventaId, producto)
+                    }
                 }
             }
 
@@ -172,13 +179,52 @@ class VentasActivity : AppCompatActivity() {
         db.close()
     }
 
-    private fun descontarProducto(idProducto: Int, cantidad: Int) {
-        val db = dbHelper.writableDatabase
+
+    private fun registrarDetalleVentaMenu(db: SQLiteDatabase, ventaId: Long, producto: Producto) {
+        // Registrar el menú como detalle de venta
+        val values = ContentValues().apply {
+            put("id_venta", ventaId)
+            put("id_menu", producto.id)
+            put("cantidad", producto.cantidad)
+            put("subtotal", producto.precio * producto.cantidad)
+        }
+        db.insert("VentasDetalle", null, values)
+
+        // Descontar ingredientes del menú
+        val query = "SELECT id_producto, cantidad_usada FROM IngredientesMenus WHERE id_menu = ?"
+        val cursor = db.rawQuery(query, arrayOf(producto.id.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idProducto = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto"))
+                val cantidadUsada = cursor.getInt(cursor.getColumnIndexOrThrow("cantidad_usada"))
+                descontarProducto(db, idProducto, producto.cantidad * cantidadUsada)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+    }
+
+    private fun registrarDetalleVentaProducto(db: SQLiteDatabase, ventaId: Long, producto: Producto) {
+        // Registrar el producto como detalle de venta
+        val values = ContentValues().apply {
+            put("id_venta", ventaId)
+            put("id_producto", producto.id)
+            put("cantidad", producto.cantidad)
+            put("subtotal", producto.precio * producto.cantidad)
+        }
+        db.insert("VentasDetalle", null, values)
+
+        // Descontar el producto del inventario
+        descontarProducto(db, producto.id, producto.cantidad)
+    }
+
+    private fun descontarProducto(db: SQLiteDatabase, idProducto: Int, cantidad: Int) {
+        Log.d("VentasActivity", "Descontando $cantidad unidades del producto con ID $idProducto")
         db.execSQL(
             "UPDATE Productos SET cantidad = cantidad - ? WHERE id_producto = ?",
             arrayOf(cantidad.toString(), idProducto.toString())
         )
-        db.close()
     }
 
     private fun limpiarCampos() {
